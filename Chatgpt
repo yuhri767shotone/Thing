@@ -1,0 +1,61 @@
+-- Create the buttons
+local ScreenGui = Instance.new("ScreenGui")
+local ButtonRollSell = Instance.new("TextButton")
+local ButtonSell = Instance.new("TextButton")
+
+ScreenGui.Parent = game.CoreGui
+
+-- Setup "Roll and Sell" button
+ButtonRollSell.Parent = ScreenGui
+ButtonRollSell.Size = UDim2.new(0, 100, 0, 50)
+ButtonRollSell.Position = UDim2.new(0, 0, 0, 0)
+ButtonRollSell.Text = "Roll and Sell"
+
+-- Setup "Sell" button
+ButtonSell.Parent = ScreenGui
+ButtonSell.Size = UDim2.new(0, 100, 0, 50)
+ButtonSell.Position = UDim2.new(0, 110, 0, 0) -- Adjusted position
+ButtonSell.Text = "Sell"
+
+-- Function to invoke the roll remote function
+local function invokeRollRemote()
+	local remoteFunctionArgs = {
+		[1] = "PremRollSkin10"
+	}
+	game:GetService("ReplicatedStorage").RemoteFunction:InvokeServer(unpack(remoteFunctionArgs))
+end
+
+-- Function to invoke the sell remote function
+local function invokeSellRemote()
+	local skins = {
+		"Hot Pink", "Agent", "Checkered", "Grey Camo", "Rusted Red",
+		"Green Camo", "Orange Crush", "Painted Yellow", "Painted Orange",
+		"Damaged", "Earth", "Painted Blue", "Painted Green", "Painted Red", 
+		"Painted Pink", "Painted Purple", "Green Sentry", "Pink Sentry", 
+		"Red Sentry", "Royal", "Fallen Agent"
+	}
+	local guns = {"SMG", "LMG", "Double Barrel Shotgun", "Revolver", "AK47", "Turret", "Shotgun"}
+
+	for _, gun in ipairs(guns) do
+		for _, skin in ipairs(skins) do
+			local eventArgs = {
+				[1] = "SellSkin",
+				[2] = gun,
+				[3] = skin
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(eventArgs))
+			game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(eventArgs))
+		end
+	end
+end
+
+-- "Roll and Sell" button - Do both actions once
+ButtonRollSell.MouseButton1Click:Connect(function()
+	invokeRollRemote()
+	invokeSellRemote()
+end)
+
+-- "Sell" button - Only sell once
+ButtonSell.MouseButton1Click:Connect(function()
+	invokeSellRemote()
+end)
